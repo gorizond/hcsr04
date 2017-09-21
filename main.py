@@ -10,8 +10,8 @@ async def start_client(loop, url):
         ws = await session.ws_connect(url)
         was_connect = True
         print('Connected to server:')
-    except:
-        pass
+    except Exception as e:
+        print(e)
     else:
         send_task = loop.create_task(send_to_server(ws))
         async for msg in ws:
@@ -36,10 +36,11 @@ async def send_to_server(ws):
     while True:
         await asyncio.sleep(1)
         ws.send_str(value.distance_metric(value.raw_distance()))
+#        ws.send_str('test')
 
 
 async def main(loop):
-    url = os.getenv('CORE_URL', 'ws://core:80/hcsr04')
+    url = os.getenv('CORE_URL', 'ws://core:8080/hcsr04')
 
     while True:
         await asyncio.sleep(1)
