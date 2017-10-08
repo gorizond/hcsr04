@@ -34,10 +34,11 @@ async def start_client(loop, url):
 async def send_to_server(ws):
     value = sensor.Measurement(int(os.getenv('TRIG_PIN', 23)), int(os.getenv('ECHO_PIN', 24)))
     while True:
-        await asyncio.sleep(1)
-        ws.send_str(value.distance_metric(value.raw_distance()))
-#        ws.send_str('test')
-
+        await asyncio.sleep(0.03)
+        try:
+            await ws.send_str(str(value.distance_metric(value.raw_distance(sample_size=2, sample_wait=0.03))))
+        except Exception as e:
+            print(e)
 
 async def main(loop):
     url = os.getenv('CORE_URL', 'ws://core:8080/hcsr04')
@@ -52,3 +53,4 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main(loop))
     loop.close()
+
